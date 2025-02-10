@@ -7,6 +7,7 @@ A Note Taking App that has a built-in md editor with user-friendly layout and si
 - tiptap (Md editor)
 - framer motion (animations)
 - react helmet async (SEO)
+- apex charts + nivo (charts)
 
 ## time spent :
 2.5 months
