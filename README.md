@@ -8,6 +8,7 @@ A Note Taking App that has a built-in md editor with user-friendly layout and si
 - framer motion (animations)
 - react helmet async (SEO)
 - apex charts + nivo (charts)
+- react hook form + Zod (form validation)
 
 ## time spent :
 2.5 months
