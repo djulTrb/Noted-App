@@ -14,6 +14,8 @@ import { useNavigate } from "react-router-dom";
 import useSupabaseSession from "../hooks/useSupabaseSession";
 import CryptoJS from "crypto-js";
 
+import { VscEye, VscEyeClosed } from "react-icons/vsc";
+
 import { setInitStats } from "../services/store/stats";
 
 import { Helmet, HelmetProvider } from "react-helmet-async";
@@ -25,7 +27,16 @@ const SignupFormSchema = z
       .min(6, "at least 6 characters")
       .max(25, "at most 25 characters"),
     email: z.string().email(),
-    password: z.string().min(6, "Password must be at least 6 characters"),
+    password: z
+      .string()
+      .min(6, "Password must be at least 6 characters")
+      .regex(/[a-zA-Z]/, "Password must contain at least one letter")
+      .regex(/[0-9]/, "Password must contain at least one number")
+      .regex(
+        /[@$!%*?&#]/,
+        "Password must contain at least one special character"
+      )
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter"),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -38,7 +49,10 @@ const SignUpScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { data, error: sessionError } = useSupabaseSession();
+  const [ShowPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const { error: sessionError } = useSupabaseSession();
 
   const { isDarkMode } = useSelector((state) => state.darkMode);
   const { themeColor } = useSelector((state) => state.parameters);
@@ -171,7 +185,7 @@ const SignUpScreen = () => {
                     </div>
                     <input
                       {...register("username", { required: true })}
-                      className="bg-stone-50 shadow-[2px_2px_2px_rgb(40,40,40,0.05)] text-stone-800 rounded-[0.2rem] focus:outline-none focus:border-gray-500 font-sourceSans_reg px-3 py-1.5 mx-1 mt-0.5 md_to_lg:w-5/6 placeholder:opacity-75 placeholder:text-[0.9rem]"
+                      className="bg-[#e8f0fe] shadow-[2px_2px_2px_rgb(40,40,40,0.05)] text-stone-800 rounded-[0.2rem] focus:outline-none focus:border-gray-500 font-sourceSans_reg px-3 py-1.5 mx-1 mt-0.5 md_to_lg:w-5/6 placeholder:opacity-75 placeholder:text-[0.9rem]"
                       id="username"
                       type="text"
                       placeholder="Username"
@@ -195,7 +209,7 @@ const SignUpScreen = () => {
                     </div>
                     <input
                       {...register("email", { required: true })}
-                      className="bg-stone-50 shadow-[2px_2px_2px_rgb(40,40,40,0.05)] text-stone-800 rounded-[0.2rem] focus:outline-none focus:border-gray-500 font-sourceSans_reg px-3 py-1.5 mx-1 mt-0.5 md_to_lg:w-5/6 placeholder:opacity-75 placeholder:text-[0.9rem]"
+                      className="bg-[#e8f0fe] shadow-[2px_2px_2px_rgb(40,40,40,0.05)] text-stone-800 rounded-[0.2rem] focus:outline-none focus:border-gray-500 font-sourceSans_reg px-3 py-1.5 mx-1 mt-0.5 md_to_lg:w-5/6 placeholder:opacity-75 placeholder:text-[0.9rem]"
                       id="email"
                       type="email"
                       placeholder="Email"
@@ -216,13 +230,33 @@ const SignUpScreen = () => {
                         </p>
                       )}
                     </div>
-                    <input
-                      {...register("password", { required: true })}
-                      className="bg-stone-50 shadow-[2px_2px_2px_rgb(40,40,40,0.05)] text-stone-800 rounded-[0.2rem] focus:outline-none focus:border-gray-500 font-sourceSans_reg px-3 py-1.5 mx-1 mt-0.5 md_to_lg:w-5/6 placeholder:opacity-75 placeholder:text-[0.9rem]"
-                      id="password"
-                      type="password"
-                      placeholder="Password"
-                    />
+                    <div className="bg-[#e8f0fe] shadow-[2px_2px_2px_rgb(40,40,40,0.05)] rounded-[0.2rem] mx-1 mt-0.5 flex items-center justify-between md_to_lg:w-5/6">
+                      <input
+                        {...register("password", { required: true })}
+                        className="bg-[#e8f0fe]  text-stone-800 rounded-[0.2rem] focus:outline-none focus:border-gray-500 font-sourceSans_reg px-3 py-1.5  placeholder:opacity-75 placeholder:text-[0.9rem]    w-11/12"
+                        id="password"
+                        type={ShowPassword ? "text" : "password"}
+                        placeholder="Password"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!ShowPassword)}
+                        className="w-1/12 pr-2 flex items-center justify-center"
+                      >
+                        {" "}
+                        {ShowPassword ? (
+                          <VscEyeClosed
+                            className=" text-stone-600 cursor-pointer text-[1.4rem]"
+                            aria-hidden="true"
+                          />
+                        ) : (
+                          <VscEye
+                            className=" text-stone-600 cursor-pointer text-[1.4rem]"
+                            aria-hidden="true"
+                          />
+                        )}
+                      </button>
+                    </div>
                   </div>
 
                   <div className="flex flex-col relative">
@@ -239,13 +273,35 @@ const SignUpScreen = () => {
                         </p>
                       )}
                     </div>
-                    <input
-                      {...register("confirmPassword", { required: true })}
-                      className="bg-stone-50 shadow-[2px_2px_2px_rgb(40,40,40,0.05)] text-stone-800 rounded-[0.2rem] focus:outline-none focus:border-gray-500 font-sourceSans_reg px-3 py-1.5 mx-1 mt-0.5 md_to_lg:w-5/6 placeholder:opacity-75 placeholder:text-[0.9rem]"
-                      id="confirm_password"
-                      type="password"
-                      placeholder="Confirm your Password"
-                    />
+                    <div className="bg-[#e8f0fe] shadow-[2px_2px_2px_rgb(40,40,40,0.05)] rounded-[0.2rem] mx-1 mt-0.5 flex items-center justify-between md_to_lg:w-5/6">
+                      <input
+                        {...register("confirmPassword", { required: true })}
+                        className="bg-[#e8f0fe]  text-stone-800 rounded-[0.2rem] focus:outline-none focus:border-gray-500 font-sourceSans_reg px-3 py-1.5  placeholder:opacity-75 placeholder:text-[0.9rem]    w-11/12"
+                        id="confirm_password"
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="Confirm your Password"
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
+                        className="w-1/12 pr-2 flex items-center justify-center"
+                      >
+                        {" "}
+                        {showConfirmPassword ? (
+                          <VscEyeClosed
+                            className=" text-stone-600 cursor-pointer text-[1.4rem]"
+                            aria-hidden="true"
+                          />
+                        ) : (
+                          <VscEye
+                            className=" text-stone-600 cursor-pointer text-[1.4rem]"
+                            aria-hidden="true"
+                          />
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
 

@@ -59,18 +59,14 @@ const Notes = () => {
       brown_note: gradient_id === 1,
       red_note: gradient_id === 2,
       RoseFog_note: gradient_id === 3,
-      greenPearl_note: gradient_id === 4,
+      midnightBlue_note: gradient_id === 4,
       teal_note: gradient_id === 5,
       bluePowder_note: gradient_id === 6,
       orange_note: gradient_id === 7,
-      amber_note: gradient_id === 8,
+      Orangeish_note: gradient_id === 8,
       grayViolet_note: gradient_id === 9,
       grayRed_note: gradient_id === 10,
       grayRose_note: gradient_id === 11,
-      PearlGreen_note: gradient_id === 12,
-      midnightBlue_note: gradient_id === 13,
-      silverMist_note: gradient_id === 14,
-      Orangeish_note: gradient_id === 15,
     });
 
     return gradientBackground;
@@ -86,7 +82,6 @@ const Notes = () => {
         </Helmet>
       </HelmetProvider>
       <SignupWarning />
-      <CircularBtn />
       <section className="px-10 xxxs:max-xxs:px-2 xxs:max-xs:px-3 lg:pt-3 md_to_lg:pt-5 pt-5 ">
         <div className="flex items-center justify-between text-violet-600">
           <h1 className="w-fit lg:text-7xl md_to_lg:text-6xl text-6xl xxxs:max-xxs:text-5xl dark:text-stone-200 text-stone-800 font-sourceSans_bl tracking-[-0.2rem]">
@@ -104,7 +99,7 @@ const Notes = () => {
 
         <NotesSearchAndFilter />
 
-        <ul className="grid xxxs:grid-cols-1 sm:grid-cols-2 md_to_lg:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 auto-rows-[13rem] grid-flow-row-dense pt-7 pb-32 gap-5">
+        <ul className="grid xxxs:grid-cols-1 sm:grid-cols-2 md_to_lg:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 auto-rows-[14rem] grid-flow-row-dense pt-7 pb-32 gap-5">
           {notes.length > 0 ? (
             notes
               .filter((note) => {
@@ -131,7 +126,7 @@ const Notes = () => {
                 return (
                   <li
                     key={ind}
-                    className={`py-4 ${clnGrid} relative rounded-3xl flex flex-col justify-between dark:bg-opacity-100 bg-opacity-30 cursor-pointer xxxs:max-sm:row-span-1 xxxs:max-sm:col-span-1 shadow-sm ${returnRandomClass(
+                    className={`py-4 ${clnGrid} border-2 relative rounded-3xl flex flex-col justify-between dark:bg-opacity-100 bg-opacity-30 cursor-pointer xxxs:max-sm:row-span-1 xxxs:max-sm:col-span-1 shadow-[0_4px_8px_rgba(0,_0,_0,_0.1),0_6px_20px_rgba(0,_0,_0,_0.08)] dark:shadow-[0_4px_8px_rgba(0,_0,_0,_0.5),0_6px_20px_rgba(0,_0,_0,_0.5)] hover:-translate-y-1.5 transition-all duration-300 opacity-85 ${returnRandomClass(
                       note?.gradient_id
                     )}`}
                     onClick={() => {

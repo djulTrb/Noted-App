@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { IoSearchSharp } from "react-icons/io5";
 import { PiMouseScroll } from "react-icons/pi";
 
+import { IoClose } from "react-icons/io5";
+
 import classNames from "classnames";
 
 import {
@@ -41,21 +43,38 @@ const NotesSearchAndFilter = () => {
             onSubmit={(e) => {
               e.preventDefault();
             }}
-            className="flex items-center divide-x-2 divide-stone-300 justify-between rounded-3xl border-stone-400 border md:w-1/3 xs:w-2/4 xxs:w-2/3 xxxs:w-full xxxs:max-xxs:mx-4 bg-[#f4f2f1] px-2 h-[2.4rem]"
+            className="flex items-center  justify-between rounded-lg border-stone-400 border md:w-1/3 xs:w-2/4 xxs:w-2/3 xxxs:w-full xxxs:max-xxs:mx-4 bg-[#f4f2f1] px-1 h-[2.4rem]"
           >
             <input
               type="text"
               placeholder="Search by title..."
               value={SearchVal}
               onChange={(e) => setSearchVal(e.target.value)}
-              className="bg-transparent border-none focus:outline-none h-full w-full px-1 font-sourceSans_reg "
+              className="bg-transparent border-none focus:outline-none text-stone-600 h-full w-11/12 px-1 font-sourceSans_reg placeholder:text-sm"
             />
+            {SearchVal && (
+              <button
+                aria-label="remove search"
+                className="p-0.5"
+                onClick={() => {
+                  dispatch(unselectAllTags());
+                  dispatch(setSearchTitleValue(""));
+                  setSearchVal("");
+                }}
+              >
+                <IoClose
+                  className="text-stone-400 text-xl "
+                  aria-hidden="true"
+                />
+              </button>
+            )}
+
             <button
               type="submit"
               aria-label="submit search"
               className="p-1.5"
               onClick={() => {
-                dispatch(unselectAllTags);
+                dispatch(unselectAllTags());
                 dispatch(setSearchTitleValue(SearchVal));
               }}
             >
@@ -79,6 +98,7 @@ const NotesSearchAndFilter = () => {
                 return (
                   <li
                     onClick={() => {
+                      dispatch(setSearchTitleValue(""));
                       if (tag.selected) {
                         dispatch(unselectTag(tag.id));
                       } else {

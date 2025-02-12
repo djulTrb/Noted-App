@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -12,12 +12,15 @@ import { FaChevronLeft, FaSun, FaMoon } from "react-icons/fa6";
 import classNames from "classnames";
 
 import { toggleDarkMode } from "../services/store/darkMode";
+import useOutsideClick from "../hooks/useOutsideClick";
 
 const Drawer = ({ setIsDrawerOpen }) => {
   const { themeColor } = useSelector((state) => state.parameters);
   const dispatch = useDispatch();
   const { isDarkMode } = useSelector((state) => state.darkMode);
+  const { token } = useSelector((state) => state.auth);
 
+  const drawerRef = useRef(null);
   const cln = classNames({
     "bg-orange-200 text-orange-600": themeColor === "orange",
     "bg-violet-200  text-violet-600": themeColor === "violet",
@@ -30,8 +33,14 @@ const Drawer = ({ setIsDrawerOpen }) => {
     dispatch(toggleDarkMode());
   };
 
+  const handleCloseDrawer = () => {
+    setIsDrawerOpen(false);
+  };
+
+  useOutsideClick(handleCloseDrawer, drawerRef);
   return (
     <aside
+      ref={drawerRef}
       className={`w-52 absolute z-[2000] dark:bg-stone-900 transition-all duration-300  dark:border-stone-950  md:col-start-1 md:row-start-1 md:col-span-1 md:row-span-2 md_to_lg:hidden  bg-stone-100 border-r border-stone-300  flex flex-col gap-10 h-full`}
     >
       <figure
@@ -71,30 +80,32 @@ const Drawer = ({ setIsDrawerOpen }) => {
         </button>
       </figure>
       <ul className="mt-20">
-        <li className="overflow-hidden flex items-center justify-center w-full">
-          <NavLink
-            to="/"
-            onClick={() => {
-              setIsDrawerOpen(false);
-            }}
-            className={({ isActive }) =>
-              isActive
-                ? `${cln} py-3 font-sourceSans_bold w-full px-0 pl-7  flex items-center gap-3`
-                : `bg-stone-100 dark:bg-stone-900 font-sourceSans_bold dark:hover:bg-stone-800 hover:bg-stone-200 dark:text-stone-100 py-3 px-5 w-full text-stone-900  flex items-center gap-3 `
-            }
-          >
-            {" "}
-            <GrHomeOption
-              className="transition-colors duration-0"
-              aria-hidden="true"
-            />
-            Home
-          </NavLink>
-        </li>
+        {!token && (
+          <li className="overflow-hidden flex items-center justify-center w-full">
+            <NavLink
+              to="/"
+              onClick={() => {
+                setIsDrawerOpen(false);
+              }}
+              className={({ isActive }) =>
+                isActive
+                  ? `${cln} py-3 font-sourceSans_bold w-full px-0 pl-7  flex items-center gap-3`
+                  : `bg-stone-100 dark:bg-stone-900 font-sourceSans_bold dark:hover:bg-stone-800 hover:bg-stone-200 dark:text-stone-100 py-3 px-5 w-full text-stone-900  flex items-center gap-3 `
+              }
+            >
+              {" "}
+              <GrHomeOption
+                className="transition-colors duration-0"
+                aria-hidden="true"
+              />
+              Home
+            </NavLink>
+          </li>
+        )}
 
         <li className="overflow-hidden flex items-center justify-center w-full">
           <NavLink
-            to="notes"
+            to={`${!token ? "notes" : ""}`}
             onClick={() => {
               setIsDrawerOpen(false);
             }}

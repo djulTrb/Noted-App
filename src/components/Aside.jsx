@@ -16,6 +16,7 @@ import SVGLogo from "./SVGLogo";
 const Aside = () => {
   const [isSideBarClosed, setISSideBarClosed] = useState(false);
   const { themeColor } = useSelector((state) => state.parameters);
+  const { token } = useSelector((state) => state.auth);
 
   const cln = classNames({
     "bg-orange-200  text-orange-600": themeColor === "orange",
@@ -55,44 +56,46 @@ const Aside = () => {
           isSideBarClosed ? "flex flex-col items-center gap-2" : ""
         }`}
       >
-        <li className="overflow-hidden flex items-center justify-center w-full">
-          {isSideBarClosed ? (
-            <>
+        {token ? null : (
+          <li className="overflow-hidden flex items-center justify-center w-full">
+            {isSideBarClosed ? (
+              <>
+                <NavLink
+                  to="/"
+                  className={({ isActive }) =>
+                    isActive
+                      ? `${cln} py-[.93rem] font-sourceSans_bold w-full flex justify-center rounded-sm  text-xl`
+                      : `bg-stone-100 dark:bg-stone-900 font-sourceSans_bold dark:hover:bg-stone-800 hover:bg-stone-200 dark:text-stone-100 w-full text-stone-900 flex justify-center px-6 py-[.93rem] text-lg`
+                  }
+                >
+                  {" "}
+                  <GrHomeOption aria-hidden="true" />
+                </NavLink>
+              </>
+            ) : (
               <NavLink
                 to="/"
                 className={({ isActive }) =>
                   isActive
-                    ? `${cln} py-[.93rem] font-sourceSans_bold w-full flex justify-center rounded-sm  text-xl`
-                    : `bg-stone-100 dark:bg-stone-900 font-sourceSans_bold dark:hover:bg-stone-800 hover:bg-stone-200 dark:text-stone-100 w-full text-stone-900 flex justify-center px-6 py-[.93rem] text-lg`
+                    ? `${cln} py-3 font-sourceSans_bold w-full px-0 pl-7  flex items-center gap-3`
+                    : `bg-stone-100 dark:bg-stone-900 font-sourceSans_bold dark:hover:bg-stone-800 hover:bg-stone-200 dark:text-stone-100 py-3 px-5 w-full text-stone-900  flex items-center gap-3 `
                 }
               >
                 {" "}
-                <GrHomeOption aria-hidden="true" />
+                <GrHomeOption
+                  className="transition-colors duration-0"
+                  aria-hidden="true"
+                />
+                Home
               </NavLink>
-            </>
-          ) : (
-            <NavLink
-              to="/"
-              className={({ isActive }) =>
-                isActive
-                  ? `${cln} py-3 font-sourceSans_bold w-full px-0 pl-7  flex items-center gap-3`
-                  : `bg-stone-100 dark:bg-stone-900 font-sourceSans_bold dark:hover:bg-stone-800 hover:bg-stone-200 dark:text-stone-100 py-3 px-5 w-full text-stone-900  flex items-center gap-3 `
-              }
-            >
-              {" "}
-              <GrHomeOption
-                className="transition-colors duration-0"
-                aria-hidden="true"
-              />
-              Home
-            </NavLink>
-          )}
-        </li>
+            )}
+          </li>
+        )}
 
         <li className="overflow-hidden flex items-center justify-center w-full">
           {isSideBarClosed ? (
             <NavLink
-              to="notes"
+              to={`${!token ? "notes" : ""}`}
               className={({ isActive }) =>
                 isActive
                   ? `${cln} py-[.93rem] font-sourceSans_bold w-full flex justify-center rounded-sm  text-xl`
@@ -103,7 +106,7 @@ const Aside = () => {
             </NavLink>
           ) : (
             <NavLink
-              to="notes"
+              to={`${!token ? "notes" : ""}`}
               className={({ isActive }) =>
                 isActive
                   ? `${cln} py-3  font-sourceSans_bold w-full px-0 pl-7  flex items-center gap-3 `
