@@ -12,3 +12,11 @@ A Note Taking App that has a built-in md editor with user-friendly layout and si
 
 ## time spent :
 2.5 months
+
+
+#### version 1.01 :
+1. gmt timezone fixed
+2. searching and filtering notes improved
+3. fixed some styles in notes page and fixed notes colors
+4. reinforced password controles
+5. fix some login issues
