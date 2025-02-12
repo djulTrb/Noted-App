@@ -37,6 +37,14 @@ import NoteContent from "./components/NoteContent.jsx";
 
 import { v4 as uuidv4 } from "uuid";
 
+const convertToTimezone = () => {
+  const dateObj = new Date();
+  let year = dateObj.getFullYear();
+  let month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
+  let day = ("0" + dateObj.getDate()).slice(-2);
+  return `${year}-${month}-${day}`;
+};
+
 function App() {
   const [openModificationWindow, setOpenModificationWindow] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -98,9 +106,7 @@ function App() {
   useEffect(() => {
     if (!token && successSession && fetchUserData.isSuccess) {
       const secretKey = import.meta.env.VITE_SECRET_ENCRYPTION_KEY;
-      const day = String(new Date().getDate()).padStart(2, "0");
-      const month = String(new Date().getMonth() + 1).padStart(2, "0");
-      const year = new Date().getFullYear();
+      const date_now = convertToTimezone();
 
       dispatch(
         setCredentials({
@@ -116,8 +122,7 @@ function App() {
 
       dispatch(
         setCreationDate(
-          fetchUserData?.data?.UserData?.[0]?.creation_date ||
-            `${year}-${month}-${day}`
+          fetchUserData?.data?.UserData?.[0]?.creation_date || date_now
         )
       );
 

@@ -23,18 +23,14 @@ const NoteContent = ({ setNoteContentOff, Ncontent }) => {
       brown_noteContent: gradient_id === 1,
       red_noteContent: gradient_id === 2,
       RoseFog_noteContent: gradient_id === 3,
-      greenPearl_noteContent: gradient_id === 4,
+      midnightBlue_noteContent: gradient_id === 4,
       teal_noteContent: gradient_id === 5,
       bluePowder_noteContent: gradient_id === 6,
       orange_noteContent: gradient_id === 7,
-      amber_noteContent: gradient_id === 8,
+      Orangeish_noteContent: gradient_id === 8,
       grayViolet_noteContent: gradient_id === 9,
       grayRed_noteContent: gradient_id === 10,
       grayRose_noteContent: gradient_id === 11,
-      PearlGreen_noteContent: gradient_id === 12,
-      midnightBlue_noteContent: gradient_id === 13,
-      silverMist_noteContent: gradient_id === 14,
-      Orangeish_noteContent: gradient_id === 15,
     });
     return gradientBackground;
   };
@@ -56,7 +52,7 @@ const NoteContent = ({ setNoteContentOff, Ncontent }) => {
       <div className="absolute inset-0 z-[9000] bg-[#1c1917a6] size-full backdrop-blur-sm"></div>
 
       <motion.div
-        className={`absolute md_to_lg:inset-10 opacity-85 backdrop-blur-sm md_to_lg:rounded-t-3xl md_to_lg:rounded-b-md inset-0 rounded-none md_to_lg:max-h-[90vh] z-[10000] overflow-clip grid grid-rows-4 bg-stone-300 ${returnRandomClass(
+        className={`absolute md_to_lg:inset-10 opacity-85 backdrop-blur-sm md_to_lg:rounded-3xl  inset-0 rounded-none md_to_lg:max-h-[90vh] z-[10000] overflow-clip grid grid-rows-4 bg-stone-300 ${returnRandomClass(
           Ncontent.color
         )}`}
         initial={{ opacity: 0, y: 30 }}
@@ -105,7 +101,7 @@ const NoteContent = ({ setNoteContentOff, Ncontent }) => {
                   return (
                     <li
                       key={idx}
-                      className={`text-stone-900 relative px-3 py-1 dark:bg-opacity-70 backdrop-blur font-sourceSans_reg tracking-wide rounded-full text-sm text-nowrap border border-stone-400 cursor-default bg-[#ffcbad]`}
+                      className={`text-stone-900 relative px-3 py-1 dark:bg-opacity-70 backdrop-blur font-sourceSans_reg tracking-wide rounded-full text-sm text-nowrap border border-stone-400 cursor-default `}
                     >
                       {tag?.val}
                     </li>

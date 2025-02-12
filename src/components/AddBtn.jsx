@@ -27,7 +27,7 @@ const AddBtn = ({ btnText, addNote }) => {
 
   return (
     <button
-      className={`px-4 py-1.5 rounded-md font-sourceSans_bl border border-stone-400 bg-stone-300 dark:bg-stone-700 bg-opacity-55 border-opacity-15 dark:border-opacity-70 flex gap-1 items-center justify-center xxxs:max-xs:text-xs ${cln}`}
+      className={`px-4 py-1.5 rounded-md font-sourceSans_bl border border-stone-400 bg-stone-300 dark:bg-stone-700 bg-opacity-55 border-opacity-15 dark:border-opacity-70 flex gap-1 items-center justify-center xxxs:max-xs:text-xs self-end mb-1 ${cln}`}
       onClick={handleClick}
       aria-label="add note"
     >

@@ -3,6 +3,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import App from "./App.jsx";
+import { useSelector } from "react-redux";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -50,22 +51,21 @@ const queryClient = new QueryClient({
   },
 });
 
+const RootLayout = () => {
+  const { token } = useSelector((state) => state.auth);
+  return token ? <Notes /> : <HomeScreen />;
+};
+
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     errorElement: <ErrorScreen />,
     children: [
-      { path: "", element: <HomeScreen /> },
-      {
-        path: "settings",
-        element: <SettingsScreen />,
-      },
+      { path: "", element: <RootLayout /> },
+      { path: "notes", element: <Notes /> },
+      { path: "settings", element: <SettingsScreen /> },
       { path: "statistics", element: <Statistics /> },
-      {
-        path: "notes",
-        element: <Notes />,
-      },
       { path: "faq", element: <FAQ /> },
     ],
   },

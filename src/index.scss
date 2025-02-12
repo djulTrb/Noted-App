@@ -11,6 +11,10 @@
   @apply transition-colors duration-200;
 }
 
+::-ms-reveal {
+  display: none;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -244,6 +248,8 @@ body {
 
 .RoseFog_note {
   background: #ddb6a7;
+  border-color: #cd9c88;
+
   & div:nth-of-type(1) h1 {
     color: #6c3130;
   }
@@ -268,60 +274,9 @@ body {
   }
 }
 
-.amber_note {
-  background: #ffb84c;
-  & div:nth-of-type(1) h1 {
-    color: #faedcd;
-  }
-
-  & div:nth-of-type(1) div span {
-    color: #d97706;
-  }
-
-  & div:nth-of-type(2) ul li {
-    color: #d97706;
-    background: #faedcd;
-  }
-}
-
-.amber_noteContent {
-  & div:nth-of-type(1) h1 {
-    color: #ee932a;
-  }
-  & div:nth-of-type(1) ul li:nth-child(1) {
-    background-color: #faedcd;
-    color: #ee932a;
-  }
-}
-
-.greenPearl_note {
-  background: #4c582b;
-  & div:nth-of-type(1) h1 {
-    color: #e6dfa0;
-  }
-
-  & div:nth-of-type(1) div span {
-    color: #e6dfa0;
-  }
-
-  & div:nth-of-type(2) ul li {
-    color: #445024;
-    background: #e6dfa0;
-  }
-}
-
-.greenPearl_noteContent {
-  & div:nth-of-type(1) h1 {
-    color: #445024;
-  }
-  & div:nth-of-type(1) ul li:nth-child(1) {
-    background-color: #e6dfa0;
-    color: #445024;
-  }
-}
-
 .red_note {
   background: #bd1c26;
+  border-color: transparent;
   & div:nth-of-type(1) h1 {
     color: #f5d59b;
   }
@@ -347,7 +302,9 @@ body {
 }
 
 .brown_note {
-  background: #ded6ac;
+  background: #ebe2b6;
+  border-color: #e6d89a;
+
   & div:nth-of-type(1) h1 {
     color: #a96637;
   }
@@ -374,6 +331,8 @@ body {
 
 .bluePowder_note {
   background: #bc99ea;
+  border-color: #a47ed5;
+
   & div:nth-of-type(1) h1 {
     color: #5e4580;
   }
@@ -400,6 +359,7 @@ body {
 
 .teal_note {
   background: #add4bcfd;
+  border-color: #94c8a7fd;
   & div:nth-of-type(1) h1 {
     color: #218380;
   }
@@ -426,6 +386,7 @@ body {
 
 .orange_note {
   background: #ffe070;
+  border-color: #e2c55c;
 
   & div:nth-of-type(1) h1 {
     color: rgb(230, 73, 17);
@@ -447,12 +408,13 @@ body {
   }
   & div:nth-of-type(1) ul li:nth-child(1) {
     background-color: #f6e092;
-    color: rgb(236, 68, 6);
+    color: rgb(244, 82, 23);
   }
 }
 
 .grayViolet_note {
   background: #ffa897;
+  border-color: #ea907e;
 
   & div:nth-of-type(1) h1 {
     color: #c51751;
@@ -479,7 +441,8 @@ body {
 }
 
 .grayRose_note {
-  background: #d2c893;
+  background: #dbcf95;
+  border-color: #d6c987;
 
   & div:nth-of-type(1) h1 {
     color: #58541f;
@@ -507,6 +470,8 @@ body {
 
 .grayRed_note {
   background: #fbe296;
+  border-color: #e8ce80;
+
   & div:nth-of-type(1) h1 {
     color: #c43138;
   }
@@ -533,6 +498,7 @@ body {
 
 .PearlGreen_note {
   background: #ffc7c8;
+  border-color: #e1a5a6;
 
   & div:nth-of-type(1) h1 {
     color: #893f71;
@@ -560,6 +526,7 @@ body {
 
 .midnightBlue_note {
   background: #acb9ba;
+  border-color: #92acaf;
 
   & div:nth-of-type(1) h1 {
     color: #274546;
@@ -586,19 +553,20 @@ body {
 }
 
 .Orangeish_note {
-  background: #eb6424;
+  background: #ff5e13;
+  border-color: transparent;
 
   & div:nth-of-type(1) h1 {
-    color: #ffe8d6;
+    color: #fff3ea;
   }
 
   & div:nth-of-type(1) div span {
-    color: #ffe8d6;
+    color: #fff3ea;
   }
 
   & div:nth-of-type(2) ul li {
-    color: #eb6424;
-    background: #ffe8d6;
+    color: #e65512;
+    background: #ffe5d3;
   }
 }
 
@@ -609,33 +577,6 @@ body {
   & div:nth-of-type(1) ul li:nth-child(1) {
     background-color: #ffe8d6;
     color: #eb6424;
-  }
-}
-
-.silverMist_note {
-  background: #e97451;
-
-  & div:nth-of-type(1) h1 {
-    color: #ffeccb;
-  }
-
-  & div:nth-of-type(1) div span {
-    color: #ffeccb;
-  }
-
-  & div:nth-of-type(2) ul li {
-    color: #d25e3a;
-    background: #ffeccb;
-  }
-}
-
-.silverMist_noteContent {
-  & div:nth-of-type(1) h1 {
-    color: #d25e3a;
-  }
-  & div:nth-of-type(1) ul li:nth-child(1) {
-    background-color: #ffeccb;
-    color: #d25e3a;
   }
 }
 

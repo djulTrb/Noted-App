@@ -35,6 +35,8 @@ const TagsAdd = ({
 }) => {
   const { themeColor } = useSelector((state) => state.parameters);
   const { nbrNotes, datesTable } = useSelector((state) => state.stats);
+  const { token } = useSelector((state) => state.auth);
+
   const [ValueInput, setValueInput] = useState({ val: "", id: "" });
   const { data } = useSupabaseSession();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -58,17 +60,36 @@ const TagsAdd = ({
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const convertToTimezone = (given_time = new Date()) => {
+    const dateObj = new Date(given_time);
+
+    let year = dateObj.getFullYear();
+    let month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
+    let day = ("0" + dateObj.getDate()).slice(-2);
+    let hours = ("0" + dateObj.getHours()).slice(-2);
+    let minutes = ("0" + dateObj.getMinutes()).slice(-2);
+    let seconds = ("0" + dateObj.getSeconds()).slice(-2);
+
+    const time = `${hours}:${minutes}:${seconds}`;
+    const date = `${year}-${month}-${day}`;
+    return { time: time, date: date };
+  };
+
   const handleUpdateNote = async () => {
     const date = new Date();
     const secretKey = import.meta.env.VITE_SECRET_ENCRYPTION_KEY;
+
     if (isProcessing) return;
+    const date_local = convertToTimezone(date).date;
+    const time_local = convertToTimezone(date).time;
+
     setIsProcessing(true);
     if (title) {
       const { data, error: updateError } = await supabase
         .from("notes")
         .update([
           {
-            updated_last_on: date,
+            updated_last_on: `${date_local} ${time_local}`,
             title: CryptoJS.AES.encrypt(title, secretKey).toString() || "",
             tags:
               Tags.length > 0 ? Tags.map((tag) => JSON.stringify(tag)) : Tags,
@@ -86,12 +107,10 @@ const TagsAdd = ({
         return;
       }
 
-      const newDate = date.toISOString().match(/^(\d{4}-\d{2}-\d{2})/)[1];
-
       const { error: statsError } = await supabase
         .from("statistics related")
         .update({
-          activity_dates: [...datesTable, newDate],
+          activity_dates: [...datesTable, date_local],
         })
         .eq("id_user", userData?.session?.user?.id);
 
@@ -100,8 +119,8 @@ const TagsAdd = ({
           updateNote({
             id: update.id,
             updated_last_on: {
-              date: newDate,
-              time: date.toISOString().match(/T(\d{2}:\d{2}:\d{2})/)[1] || "",
+              date: date_local,
+              time: time_local,
             },
             title: title,
             tags: Tags,
@@ -109,9 +128,13 @@ const TagsAdd = ({
           })
         );
 
-        dispatch(addNewDate(newDate));
+        dispatch(addNewDate(date_local));
 
-        navigate("/notes");
+        if (!token) {
+          navigate("/notes");
+        } else {
+          navigate("/");
+        }
       } else {
         setTimeout(() => {
           setNewError(false);
@@ -132,8 +155,11 @@ const TagsAdd = ({
     const ID = uuidv4();
     const date = new Date();
     const secretKey = import.meta.env.VITE_SECRET_ENCRYPTION_KEY;
-    const rand = Math.floor(Math.random() * 15) + 1;
+    const rand = Math.floor(Math.random() * 11) + 1;
+
     if (isProcessing) return;
+    const date_local = convertToTimezone(date).date;
+    const time_local = convertToTimezone(date).time;
 
     setIsProcessing(true);
     if (token) {
@@ -143,7 +169,7 @@ const TagsAdd = ({
             id_user: data?.user?.id,
             id_note: ID,
             gradient_id: rand,
-            created_on: date,
+            created_on: `${date_local} ${time_local}`,
             updated_last_on: null,
             title: CryptoJS.AES.encrypt(title, secretKey).toString() || "",
             tags:
@@ -156,10 +182,7 @@ const TagsAdd = ({
         const { error: statsError } = await supabase
           .from("statistics related")
           .update({
-            activity_dates: [
-              ...datesTable,
-              date.toISOString().match(/^(\d{4}-\d{2}-\d{2})/)[1],
-            ],
+            activity_dates: [...datesTable, date_local],
             nbr_notes: nbrNotes + 1,
           })
           .eq("id_user", data?.user?.id);
@@ -170,12 +193,8 @@ const TagsAdd = ({
               gradient_id: rand,
               id: ID,
               created_on: {
-                date: date.toISOString().match(/^(\d{4}-\d{2}-\d{2})/)
-                  ? date.toISOString().match(/^(\d{4}-\d{2}-\d{2})/)[1]
-                  : "",
-                time: date.toISOString().match(/T(\d{2}:\d{2}:\d{2})/)
-                  ? date.toISOString().match(/T(\d{2}:\d{2}:\d{2})/)[1]
-                  : "",
+                date: date_local || "",
+                time: time_local || "",
               },
               title: title,
               tags: Tags,
@@ -183,12 +202,14 @@ const TagsAdd = ({
             })
           );
 
-          dispatch(
-            addNewDate(date.toISOString().match(/^(\d{4}-\d{2}-\d{2})/)[1])
-          );
+          dispatch(addNewDate(date_local));
           dispatch(incrementNotesNumber());
 
-          navigate("/notes");
+          if (!token) {
+            navigate("/notes");
+          } else {
+            navigate("/");
+          }
         } else {
           setTimeout(() => {
             setNewError(false);
@@ -208,19 +229,19 @@ const TagsAdd = ({
             id: ID,
             gradient_id: rand,
             created_on: {
-              date: date.toISOString().match(/^(\d{4}-\d{2}-\d{2})/)
-                ? date.toISOString().match(/^(\d{4}-\d{2}-\d{2})/)[1]
-                : "",
-              time: date.toISOString().match(/T(\d{2}:\d{2}:\d{2})/)
-                ? date.toISOString().match(/T(\d{2}:\d{2}:\d{2})/)[1]
-                : "",
+              date: date_local || "",
+              time: time_local || "",
             },
             title: title,
             tags: Tags,
             text_value: content,
           })
         );
-        navigate("/notes");
+        if (!token) {
+          navigate("/notes");
+        } else {
+          navigate("/");
+        }
       } else {
         setTimeout(() => {
           setError(false);
@@ -273,7 +294,11 @@ const TagsAdd = ({
         <button
           aria-label="cancel note add"
           onClick={() => {
-            navigate("/notes");
+            if (!token) {
+              navigate("/notes");
+            } else {
+              navigate("/");
+            }
           }}
         >
           <MdDeleteOutline className="text-[1.4rem] text-stone-600" />

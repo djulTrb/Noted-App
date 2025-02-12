@@ -10,19 +10,25 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { supabase } from "../services/supabaseClient";
 import useSupabaseSession from "../hooks/useSupabaseSession";
+import { VscEye, VscEyeClosed } from "react-icons/vsc";
 
 import { Helmet, HelmetProvider } from "react-helmet-async";
 
 const SignupFormSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(6, "password must be at least 6 characters"),
+  password: z
+    .string()
+    .min(6, "Password must be at least 6 characters")
+    .regex(/[a-zA-Z]/, "Password must contain at least one letter")
+    .regex(/[0-9]/, "Password must contain at least one number")
+    .regex(/[@$!%*?&#]/, "Password must contain at least one special character")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter"),
 });
 
 const LogInScreen = () => {
   const [err, setErr] = useState(false);
   const navigate = useNavigate();
-
-  const { error: sessionError } = useSupabaseSession();
+  const [Show, setShow] = useState(false);
 
   const { isDarkMode } = useSelector((state) => state.darkMode);
   const { themeColor } = useSelector((state) => state.parameters);
@@ -56,7 +62,7 @@ const LogInScreen = () => {
       password: Userdata.password,
     });
 
-    if (loginError || sessionError) {
+    if (loginError) {
       setTimeout(() => {
         setErr(false);
       }, 2000);
@@ -106,7 +112,7 @@ const LogInScreen = () => {
                     </label>
                     <input
                       {...register("email", { required: true })}
-                      className="bg-stone-50 shadow-[2px_2px_2px_rgb(40,40,40,0.05)] text-stone-800 rounded-[0.2rem] focus:outline-none focus:border-gray-500 font-sourceSans_reg px-3 py-1.5 mx-1 mt-1 md:w-5/6 placeholder:opacity-75 placeholder:text-[0.9rem]"
+                      className="bg-[#e8f0fe] shadow-[2px_2px_2px_rgb(40,40,40,0.05)] text-stone-800 rounded-[0.2rem] focus:outline-none focus:border-gray-500 font-sourceSans_reg px-2 py-1.5 mx-1 mt-1 md:w-5/6 placeholder:opacity-75 placeholder:text-[0.9rem]"
                       id="email"
                       type="text"
                       placeholder="Email"
@@ -125,13 +131,34 @@ const LogInScreen = () => {
                     >
                       Password
                     </label>
-                    <input
-                      {...register("password", { required: true })}
-                      className="bg-stone-50 shadow-[2px_2px_2px_rgb(40,40,40,0.05)] text-stone-800 rounded-[0.2rem] focus:outline-none focus:border-gray-500 font-sourceSans_reg px-3 py-1.5 mx-1 mt-0.5 md:w-5/6 placeholder:opacity-75 placeholder:text-[0.9rem]"
-                      id="password"
-                      type="password"
-                      placeholder="Password"
-                    />
+                    <div className="bg-[#e8f0fe] shadow-[2px_2px_2px_rgb(40,40,40,0.05)] rounded-[0.2rem] mx-1 mt-0.5 md:w-5/6 flex items-center justify-between">
+                      <input
+                        {...register("password", { required: true })}
+                        className=" text-stone-800 bg-[#e8f0fe] focus:outline-none focus:border-gray-500 font-sourceSans_reg w-11/12 placeholder:opacity-75 px-2 py-1.5 rounded-[0.2rem] placeholder:text-[0.9rem]"
+                        id="password"
+                        type={Show ? "text" : "password"}
+                        placeholder="Password"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() => setShow(!Show)}
+                        className="w-1/12 pr-2 flex items-center justify-center"
+                      >
+                        {" "}
+                        {Show ? (
+                          <VscEyeClosed
+                            className=" text-stone-600 cursor-pointer text-[1.4rem]"
+                            aria-hidden="true"
+                          />
+                        ) : (
+                          <VscEye
+                            className=" text-stone-600 cursor-pointer text-[1.4rem]"
+                            aria-hidden="true"
+                          />
+                        )}
+                      </button>
+                    </div>
                     {errors?.password && (
                       <p className="text-nowrap mt-0.5 text-opacity-80 text-red-600 font-sourceSans_reg text-xs">
                         {errors?.password?.message}
@@ -180,7 +207,7 @@ const LogInScreen = () => {
             <img
               src={formPic}
               alt="an illustration image of a woman meditating"
-              className="h-auto w-auto object-cover block absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 rounded-r-lg backdrop-blur-md"
+              className="h-auto w-auto object-cover block absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 "
             />
           </figure>
         </div>
