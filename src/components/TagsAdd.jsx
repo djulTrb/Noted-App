@@ -22,6 +22,7 @@ import CryptoJS from "crypto-js";
 import { updateNote } from "../services/store/note";
 
 import { incrementNotesNumber, addNewDate } from "../services/store/stats";
+import { setTagsList } from "../services/store/NotesSectionActions";
 
 const TagsAdd = ({
   handleAddingNewTags,
@@ -84,37 +85,70 @@ const TagsAdd = ({
     const time_local = convertToTimezone(date).time;
 
     setIsProcessing(true);
-    if (title) {
-      const { data, error: updateError } = await supabase
-        .from("notes")
-        .update([
-          {
-            updated_last_on: `${date_local} ${time_local}`,
-            title: CryptoJS.AES.encrypt(title, secretKey).toString() || "",
-            tags:
-              Tags.length > 0 ? Tags.map((tag) => JSON.stringify(tag)) : Tags,
-            text_value:
-              CryptoJS.AES.encrypt(content, secretKey).toString() || "",
-          },
-        ])
-        .eq("id_note", update.id)
-        .select();
+    if (token) {
+      if (title) {
+        const { error: updateError } = await supabase
+          .from("notes")
+          .update([
+            {
+              updated_last_on: `${date_local} ${time_local}`,
+              title: CryptoJS.AES.encrypt(title, secretKey).toString() || "",
+              tags:
+                Tags.length > 0 ? Tags.map((tag) => JSON.stringify(tag)) : Tags,
+              text_value:
+                CryptoJS.AES.encrypt(content, secretKey).toString() || "",
+            },
+          ])
+          .eq("id_note", update.id)
+          .select();
 
-      const { data: userData, error: userError } =
-        await supabase.auth.getSession();
+        const { data: userData, error: userError } =
+          await supabase.auth.getSession();
 
-      if (userError) {
-        return;
+        if (userError) {
+          return;
+        }
+
+        const { error: statsError } = await supabase
+          .from("statistics related")
+          .update({
+            activity_dates: [...datesTable, date_local],
+          })
+          .eq("id_user", userData?.session?.user?.id);
+
+        if (!updateError && !statsError) {
+          dispatch(
+            updateNote({
+              id: update.id,
+              updated_last_on: {
+                date: date_local,
+                time: time_local,
+              },
+              title: title,
+              tags: Tags,
+              text_value: content,
+            })
+          );
+
+          Tags.forEach((tag) => {
+            dispatch(setTagsList({ val: tag.val, id: tag.id }));
+          });
+          dispatch(addNewDate(date_local));
+          navigate("/");
+        } else {
+          setTimeout(() => {
+            setNewError(false);
+          }, 3000);
+          setNewError(true);
+        }
+      } else {
+        setTimeout(() => {
+          setError(false);
+        }, 3000);
+        setError(true);
       }
-
-      const { error: statsError } = await supabase
-        .from("statistics related")
-        .update({
-          activity_dates: [...datesTable, date_local],
-        })
-        .eq("id_user", userData?.session?.user?.id);
-
-      if (!updateError && !statsError) {
+    } else {
+      if (title) {
         dispatch(
           updateNote({
             id: update.id,
@@ -128,24 +162,11 @@ const TagsAdd = ({
           })
         );
 
-        dispatch(addNewDate(date_local));
-
-        if (!token) {
-          navigate("/notes");
-        } else {
-          navigate("/");
-        }
-      } else {
-        setTimeout(() => {
-          setNewError(false);
-        }, 3000);
-        setNewError(true);
+        Tags.forEach((tag) => {
+          dispatch(setTagsList({ val: tag.val, id: tag.id }));
+        });
+        navigate("/notes");
       }
-    } else {
-      setTimeout(() => {
-        setError(false);
-      }, 3000);
-      setError(true);
     }
     setIsProcessing(false);
   };
@@ -202,14 +223,14 @@ const TagsAdd = ({
             })
           );
 
+          Tags.forEach((tag) => {
+            dispatch(setTagsList({ val: tag.val, id: tag.id }));
+          });
+
           dispatch(addNewDate(date_local));
           dispatch(incrementNotesNumber());
 
-          if (!token) {
-            navigate("/notes");
-          } else {
-            navigate("/");
-          }
+          navigate("/");
         } else {
           setTimeout(() => {
             setNewError(false);
@@ -237,11 +258,12 @@ const TagsAdd = ({
             text_value: content,
           })
         );
-        if (!token) {
-          navigate("/notes");
-        } else {
-          navigate("/");
-        }
+
+        Tags.forEach((tag) => {
+          dispatch(setTagsList({ val: tag.val, id: tag.id }));
+        });
+
+        navigate("/notes");
       } else {
         setTimeout(() => {
           setError(false);
@@ -271,7 +293,7 @@ const TagsAdd = ({
           onChange={(e) => {
             setValueInput({
               val: e.target.value,
-              id: Tags.length === 0 ? 1 : Tags.length + 1,
+              id: uuidv4(),
             });
           }}
         />
@@ -284,7 +306,7 @@ const TagsAdd = ({
             onClick={() => {
               if (ValueInput.val !== "") {
                 handleAddingNewTags(ValueInput);
-                setValueInput({ val: "", id: 0 });
+                setValueInput({ val: "", id: null });
               }
             }}
           />

@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { deleteNote } from "../services/store/note";
 
@@ -13,8 +13,11 @@ import { motion } from "motion/react";
 import NoteContentDisplayArea from "./NoteContentDisplayArea";
 
 import { supabase } from "../services/supabaseClient";
+import { deleteTagsFromNotes } from "../services/store/NotesSectionActions";
 
 const NoteContent = ({ setNoteContentOff, Ncontent }) => {
+  const { token } = useSelector((state) => state.auth);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -36,15 +39,23 @@ const NoteContent = ({ setNoteContentOff, Ncontent }) => {
   };
 
   const handleDeleteNote = async () => {
-    const { data, error } = await supabase
-      .from("notes")
-      .delete()
-      .eq("id_note", Ncontent.id)
-      .select();
+    if (token) {
+      const { data, error } = await supabase
+        .from("notes")
+        .delete()
+        .eq("id_note", Ncontent.id)
+        .select();
 
-    if (!error) {
-      dispatch(deleteNote(data?.[0]?.id_note));
+      if (!error) {
+        console.log(Ncontent.tags);
+        dispatch(deleteNote(data?.[0]?.id_note));
+        dispatch(deleteTagsFromNotes(Ncontent.tags));
+      }
+    } else {
+      dispatch(deleteNote(Ncontent.id));
+      dispatch(deleteTagsFromNotes(Ncontent.tags));
     }
+    setNoteContentOff({});
   };
 
   return (
@@ -86,7 +97,6 @@ const NoteContent = ({ setNoteContentOff, Ncontent }) => {
               className="flex gap-1.5 items-center text-stone-800 font-sourceSans_bold md_to_lg:px-4 px-2  py-1 border border-stone-700 border-opacity-40 bg-stone-200 cursor-pointer w-fit rounded-2xl xxxs:max-md_to_lg:text-sm"
               onClick={async () => {
                 await handleDeleteNote();
-                window.location.reload();
               }}
             >
               <button className="text-stone-700">Delete</button>
