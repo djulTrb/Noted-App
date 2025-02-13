@@ -24,3 +24,6 @@ A Note Taking App that has a built-in md editor with user-friendly layout and si
 #### version 1.02 :
 1. fixed tags not being removed after deleting notes
 2. fixed app use when the user is not logged in
+
+#### version 1.03 :
+1. fixed log out 
