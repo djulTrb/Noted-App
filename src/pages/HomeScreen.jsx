@@ -78,10 +78,10 @@ const HomeScreen = () => {
             </p>
           </figure>
 
-          <h1 className="text-[6.5rem] tracking-tight text-stone-800 dark:text-stone-200 font-sourceSans_bl ">
+          <h1 className="sm:text-[6.5rem] text-7xl xxxs:max-sm:mt-7 tracking-tight text-stone-800 dark:text-stone-200 font-sourceSans_bl ">
             Noted
           </h1>
-          <p className="md:hidden block text-stone-600 dark:text-stone-400 pl-4  leading-5 font-purity w-56">
+          <p className="md:hidden block text-stone-600 dark:text-stone-400 pl-4  leading-5 font-sourceSans_reg w-56">
             note-taking app to capture your thoughts anytime, anywhere.
           </p>
         </div>
@@ -95,7 +95,7 @@ const HomeScreen = () => {
             />
           </figure>
           <div className="grid relative z-30 col-start-1">
-            <div className="space-y-1.5 xl:space-y-2 xl:w-5/6 sm:max-md:w-9/12 sm:ml-4 xs:ml-4 ml-2 relative z-30">
+            <div className="space-y-1.5 xl:space-y-2 xl:w-5/6 sm:max-md:w-9/12 sm:ml-4 xs:ml-4 ml-2 z-30 relative">
               <h2
                 className={`text-3xl xl:text-[2rem] font-sourceSans_bl  text-stone-700 dark:text-stone-300 z-20`}
               >

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AddBtn from "../components/AddBtn";
 import SignupWarning from "../components/SignupWarning";
-import CircularBtn from "../components/CircularBtn";
 import { useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 import classNames from "classnames";
@@ -9,6 +8,9 @@ import NotesSearchAndFilter from "../components/NotesSearchAndFilter";
 import { useOutletContext } from "react-router";
 
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import { motion } from "framer-motion";
+
+import { VscSearchStop } from "react-icons/vsc";
 
 const Notes = () => {
   const { setNoteModalIsOpen: setNoteContentOn } = useOutletContext();
@@ -100,96 +102,108 @@ const Notes = () => {
         <NotesSearchAndFilter />
 
         <ul className="grid xxxs:grid-cols-1 sm:grid-cols-2 md_to_lg:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 auto-rows-[14rem] grid-flow-row-dense pt-7 pb-32 gap-5">
-          {notes.length > 0 ? (
-            notes
-              .filter((note) => {
-                if (selectedTags.length === 0) {
-                  return true;
-                }
-                return selectedTags.every((selectedTag) =>
-                  note.tags.some((noteTag) => noteTag.val === selectedTag.val)
-                );
-              })
-              .filter((note) => {
-                return note.title.includes(searchTitle);
-              })
-              .map((note, ind) => {
-                const clnGrid = classNames({
-                  "col-span-1 row-span-1":
-                    gridArr[ind] >= 3 || ind === notes.length - 1,
-                  "col-span-2 row-span-1":
-                    gridArr[ind] === 2 && ind !== notes.length - 1,
-                  "col-span-1 row-span-2":
-                    gridArr[ind] === 1 && ind !== notes.length - 1,
-                });
-
-                return (
-                  <li
-                    key={ind}
-                    className={`py-4 ${clnGrid} border-2 relative rounded-3xl flex flex-col justify-between dark:bg-opacity-100 bg-opacity-30 cursor-pointer xxxs:max-sm:row-span-1 xxxs:max-sm:col-span-1 shadow-[0_4px_8px_rgba(0,_0,_0,_0.1),0_6px_20px_rgba(0,_0,_0,_0.08)] dark:shadow-[0_4px_8px_rgba(0,_0,_0,_0.5),0_6px_20px_rgba(0,_0,_0,_0.5)] hover:-translate-y-1.5 transition-all duration-300 opacity-85 ${returnRandomClass(
-                      note?.gradient_id
-                    )}`}
-                    onClick={() => {
-                      setNoteContentOn({
-                        id: note?.id,
-                        title: note?.title,
-                        created: note?.created_on?.date,
-                        tags: note?.tags,
-                        color: note?.gradient_id,
-                        content: note?.text_value,
-                      });
-                    }}
-                  >
-                    <div className="z-20">
-                      <h1
-                        className={`font-sourceSans_bl tracking-[-0.05rem] text-[2.1rem] text-wrap line-clamp-2 leading-8 h-fit px-2 p-1`}
-                      >
-                        {note?.title || ""}
-                      </h1>
-
-                      <div className="flex flex-col px-2 ml-1 mix-blend-normal py-1.5">
-                        <span
-                          className={`text-[0.65rem] font-monofont z-50 w-fit ${cln}`}
-                        >
-                          Cre. {note?.created_on?.date}
-                          {" - "}
-                          {note?.created_on?.time.match(/\d{2}:\d{2}/)}
-                        </span>
-
-                        <span
-                          className={`text-[0.65rem] font-monofont z-50 w-fit ${cln}`}
-                        >
-                          {Object.keys(note?.updated_last_on || {}).length >
-                            0 &&
-                            `Upd. ${note?.updated_last_on?.date} -
-                          ${note?.updated_last_on?.time.match(/\d{2}:\d{2}/)}`}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="w-full px-2 z-20">
-                      <ul className="flex justify-start gap-2 overflow-x-auto scroll_none rounded-xl">
-                        {note?.tags &&
-                          note.tags.map((tag, idx) => {
-                            return (
-                              <li
-                                key={tag?.gradient_id || idx}
-                                className={`text-stone-950 relative px-3 py-1 dark:bg-opacity-70 backdrop-blur font-sourceSans_reg tracking-wide rounded-full text-sm text-nowrap`}
-                              >
-                                {tag?.val}
-                              </li>
-                            );
-                          })}
-                      </ul>
-                    </div>
-                  </li>
-                );
-              })
-          ) : (
+          {notes.length === 0 ? (
             <p className="text-stone-400 xxs:text-3xl xxxs:text-xl text-opacity-60 text-center col-span-full font-purity">
               Notes list is empty, click on{" "}
               <span className="text-nowrap">'note +'</span> to add a new note
             </p>
+          ) : (
+            (() => {
+              const filteredNotes = notes
+                .filter((note) => {
+                  if (selectedTags.length === 0) return true;
+                  return selectedTags.every((selectedTag) =>
+                    note.tags.some((noteTag) => noteTag.val === selectedTag.val)
+                  );
+                })
+                .filter((note) => note.title.includes(searchTitle));
+              if (filteredNotes.length === 0) {
+                return (
+                  <motion.p
+                    initial={{ y: 10, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: -10, opacity: 0 }}
+                    className="text-center font-purity text-xl text-stone-500 dark:text-stone-500 col-span-full flex items-center gap-1.5 justify-center"
+                  >
+                    No results found, Please try different keywords.
+                    <VscSearchStop className="sm:block hidden text-lg" />
+                  </motion.p>
+                );
+              } else {
+                return filteredNotes.map((note, ind) => {
+                  const clnGrid = classNames({
+                    "col-span-1 row-span-1":
+                      gridArr[ind] >= 3 || ind === filteredNotes.length - 1,
+                    "col-span-2 row-span-1":
+                      gridArr[ind] === 2 && ind !== filteredNotes.length - 1,
+                    "col-span-1 row-span-2":
+                      gridArr[ind] === 1 && ind !== filteredNotes.length - 1,
+                  });
+
+                  return (
+                    <li
+                      key={ind}
+                      className={`py-4 ${clnGrid} border-2 relative rounded-3xl flex flex-col justify-between dark:bg-opacity-100 bg-opacity-30 cursor-pointer xxxs:max-sm:row-span-1 xxxs:max-sm:col-span-1 shadow-[0_4px_8px_rgba(0,_0,_0,_0.1),0_6px_20px_rgba(0,_0,_0,_0.08)] dark:shadow-[0_4px_8px_rgba(0,_0,_0,_0.5),0_6px_20px_rgba(0,_0,_0,_0.5)] hover:-translate-y-1.5 transition-all duration-300 opacity-85 ${returnRandomClass(
+                        note?.gradient_id
+                      )}`}
+                      onClick={() => {
+                        setNoteContentOn({
+                          id: note?.id,
+                          title: note?.title,
+                          created: note?.created_on?.date,
+                          tags: note?.tags,
+                          color: note?.gradient_id,
+                          content: note?.text_value,
+                        });
+                      }}
+                    >
+                      <div className="z-20">
+                        <h1
+                          className={`font-sourceSans_bl tracking-[-0.05rem] text-[2.1rem] text-wrap line-clamp-2 leading-8 h-fit px-2 p-1`}
+                        >
+                          {note?.title || ""}
+                        </h1>
+
+                        <div className="flex flex-col px-2 ml-1 mix-blend-normal py-1.5">
+                          <span
+                            className={`text-[0.65rem] font-monofont z-50 w-fit ${cln}`}
+                          >
+                            Cre. {note?.created_on?.date}
+                            {" - "}
+                            {note?.created_on?.time.match(/\d{2}:\d{2}/)}
+                          </span>
+
+                          <span
+                            className={`text-[0.65rem] font-monofont z-50 w-fit ${cln}`}
+                          >
+                            {Object.keys(note?.updated_last_on || {}).length >
+                              0 &&
+                              `Upd. ${note?.updated_last_on?.date} -
+                          ${note?.updated_last_on?.time.match(/\d{2}:\d{2}/)}`}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="w-full px-2 z-20">
+                        <ul className="flex justify-start gap-2 overflow-x-auto scroll_none rounded-xl">
+                          {note?.tags &&
+                            note.tags.map((tag, idx) => {
+                              return (
+                                <li
+                                  key={tag?.gradient_id || idx}
+                                  className={`text-stone-950 relative px-3 py-1 dark:bg-opacity-70 backdrop-blur font-sourceSans_reg tracking-wide rounded-full text-sm text-nowrap`}
+                                >
+                                  {tag?.val}
+                                </li>
+                              );
+                            })}
+                        </ul>
+                      </div>
+                    </li>
+                  );
+                });
+              }
+            })()
           )}
         </ul>
       </section>

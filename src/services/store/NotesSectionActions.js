@@ -43,6 +43,12 @@ const NotesSectionSlice = createSlice({
     setSearchTitleValue: (state, action) => {
       state.searchTitle = action.payload;
     },
+    deleteTagsFromNotes: (state, action) => {
+      const noteTags = action.payload;
+      state.tags = state.tags.filter(
+        (tag) => !noteTags.some((noteTag) => noteTag.id === tag.id)
+      );
+    },
   },
 });
 
@@ -52,6 +58,7 @@ export const {
   unselectTag,
   setSearchTitleValue,
   unselectAllTags,
+  deleteTagsFromNotes,
 } = NotesSectionSlice.actions;
 
 export default NotesSectionSlice.reducer;

@@ -5,10 +5,13 @@ import NewNoteScreen from "../pages/NewNoteScreen";
 import { supabase } from "../services/supabaseClient";
 
 import CryptoJS from "crypto-js";
+import { useSelector } from "react-redux";
 
 const NoteUpdate = () => {
   const { idNote } = useParams();
   const [noteData, setNoteData] = useState({});
+  const { token } = useSelector((state) => state.auth);
+  const notes = useSelector((state) => state.note);
 
   useEffect(() => {
     (async () => {
@@ -17,21 +20,32 @@ const NoteUpdate = () => {
         .select()
         .eq("id_note", idNote);
 
-      if (!error) {
-        const secretKey = import.meta.env.VITE_SECRET_ENCRYPTION_KEY;
+      if (token) {
+        if (!error) {
+          const secretKey = import.meta.env.VITE_SECRET_ENCRYPTION_KEY;
+          setNoteData({
+            id: data[0]?.id_note,
+            title: CryptoJS.AES.decrypt(
+              data?.[0]?.title || "title",
+              secretKey
+            ).toString(CryptoJS.enc.Utf8),
+            tags:
+              data?.[0]?.tags !== null && data?.[0]?.tags
+                ? data?.[0]?.tags.map((tag) => JSON.parse(tag))
+                : [],
+            text_value: CryptoJS.AES.decrypt(
+              data?.[0]?.text_value || "content",
+              secretKey
+            ).toString(CryptoJS.enc.Utf8),
+          });
+        }
+      } else {
+        const selectedNote = notes.filter((el) => el.id === idNote)[0];
         setNoteData({
-          id: data[0]?.id_note,
-          title: CryptoJS.AES.decrypt(data?.[0]?.title, secretKey).toString(
-            CryptoJS.enc.Utf8
-          ),
-          tags:
-            data?.[0]?.tags !== null && data?.[0]?.tags
-              ? data?.[0]?.tags.map((tag) => JSON.parse(tag))
-              : [],
-          text_value: CryptoJS.AES.decrypt(
-            data?.[0]?.text_value,
-            secretKey
-          ).toString(CryptoJS.enc.Utf8),
+          id: selectedNote.id,
+          title: selectedNote.title,
+          tags: selectedNote.tags,
+          text_value: selectedNote.text_value,
         });
       }
     })();
