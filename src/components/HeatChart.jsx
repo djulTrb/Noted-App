@@ -42,7 +42,7 @@ const HeatChart = () => {
           Your Note-Taking Activity Over Time :
         </span>
       </h2>
-      <div style={{ height: "240px", minWidth: "600px" }}>
+      <div style={{ height: "240px", minWidth: "750px" }}>
         <ResponsiveCalendar
           data={
             heatData.length > 0 ? heatData : [{ value: 0, day: "1970-01-01" }]

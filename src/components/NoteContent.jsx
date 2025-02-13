@@ -47,7 +47,6 @@ const NoteContent = ({ setNoteContentOff, Ncontent }) => {
         .select();
 
       if (!error) {
-        console.log(Ncontent.tags);
         dispatch(deleteNote(data?.[0]?.id_note));
         dispatch(deleteTagsFromNotes(Ncontent.tags));
       }

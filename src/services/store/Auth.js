@@ -13,6 +13,7 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.token = null;
+      state.image = null;
     },
     setCredentials: (state, action) => {
       state.user = action.payload.user;

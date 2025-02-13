@@ -8,7 +8,15 @@ import { FaChevronRight } from "react-icons/fa6";
 
 import { supabase } from "../services/supabaseClient";
 
+import { useDispatch } from "react-redux";
+
+import { logout } from "../services/store/Auth";
+import { clearAllSearch } from "../services/store/NotesSectionActions";
+import { clearNotes } from "../services/store/note";
+import { clearStats } from "../services/store/stats";
+
 const DropDownMenu = ({ setMenuOpen }) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleCloseDropDown = () => {
@@ -21,7 +29,10 @@ const DropDownMenu = ({ setMenuOpen }) => {
       navigate("random404");
     }
     handleCloseDropDown();
-    window.location.reload();
+    dispatch(logout());
+    dispatch(clearAllSearch());
+    dispatch(clearNotes());
+    dispatch(clearStats());
     navigate("/");
   };
 
