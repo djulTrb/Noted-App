@@ -166,6 +166,11 @@ const TagsAdd = ({
           dispatch(setTagsList({ val: tag.val, id: tag.id }));
         });
         navigate("/notes");
+      } else {
+        setTimeout(() => {
+          setError(false);
+        }, 3000);
+        setError(true);
       }
     }
     setIsProcessing(false);
@@ -312,7 +317,7 @@ const TagsAdd = ({
           />
         </button>
       </div>
-      <div className="flex items-center xs:gap-4 xxs:gap-2 xxxs:gap-1  xs:bg-stone-400 xs:bg-opacity-20 xs:border border-stone-400 border-opacity-30 xs:px-4 xxs:px-2 xxxs:px-1 xs:rounded-full xs:py-2">
+      <div className="flex items-center xs:gap-4 xxs:gap-4 xxxs:gap-3.5  xs:bg-stone-400 xs:bg-opacity-20 xs:border border-stone-400 border-opacity-30 xs:px-4 xxs:px-2 xxxs:px-1 xs:rounded-full xs:py-2">
         <button
           aria-label="cancel note add"
           onClick={() => {

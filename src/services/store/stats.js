@@ -90,6 +90,13 @@ const StatsSlice = createSlice({
         y,
       }));
     },
+    clearStats: (state) => {
+      state.nbrNotes = 0;
+      state.creation_date = "";
+      state.areaData = [];
+      state.heatData = [];
+      state.datesTable = [];
+    },
   },
 });
 
@@ -102,5 +109,6 @@ export const {
   setDatesTable,
   setAreaChartData,
   setHeatChartData,
+  clearStats,
 } = StatsSlice.actions;
 export default StatsSlice.reducer;
