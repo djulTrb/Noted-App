@@ -20,3 +20,7 @@ A Note Taking App that has a built-in md editor with user-friendly layout and si
 3. fixed some styles in notes page and fixed notes colors
 4. reinforced password controles
 5. fix some login issues
+
+#### version 1.02 :
+1. fixed tags not being removed after deleting notes
+2. fixed app use when the user is not logged in
