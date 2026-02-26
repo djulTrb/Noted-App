@@ -1,53 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <script>
-      const theme = localStorage.getItem("isDarkMode") || false;
-      if (theme) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
-    </script>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <meta
-      name="description"
-      content="Welcome to Noted. Manage your notes efficiently and effectively."
-    />
-    <meta
-      name="keywords"
-      content="notes, note taking, productivity, organization, stats, noted, mutimedia,pictures, youtube"
-    />
-    <meta name="robots" content="index, follow" />
-    <meta
-      property="og:description"
-      content="Welcome to Noted. Manage your notes efficiently and effectively."
-    />
-    <meta property="og:type" content="website" />
+<head>
+  <script>
+    const theme = localStorage.getItem('isDarkMode') || false;
+    if (theme === 'true' || theme === true) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/src/assets/favicon/iconApp.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Everything worth remembering, in one place." />
+  <title>Noted</title>
+  <!-- Fonts for Glass Garden -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,400;1,600&family=Fira+Code:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+</head>
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:description"
-      content="Welcome to Noted. Manage your notes efficiently and effectively."
-    />
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
 
-    <title>Noted</title>
-    <link
-      rel="icon"
-      href="src/assets/favicon/iconApp.png"
-      type="image/x-icon"
-    />
-    <link
-      rel="shortcut icon"
-      href="src/assets/favicon/iconApp.png"
-      type="image/x-icon"
-    />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
 </html>

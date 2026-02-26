@@ -1,87 +1,48 @@
-import "../init.js";
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from './lib/queryClient.js';
+import { useAuthStore } from './stores/authStore.js';
+import { ToastProvider } from './components/ui/Toast.jsx';
+import App from './App.jsx';
+import './styles/index.css';
+import './styles/editor.css';
 
-import App from "./App.jsx";
-import { useSelector } from "react-redux";
+// We must correctly handle the auth initialization gating
+// We create an AppWrapper to handle initialization before rendering
+function AppWrapper() {
+    const isInitialized = useAuthStore((state) => state.isInitialized);
+    const initialize = useAuthStore((state) => state.initialize);
 
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+    React.useEffect(() => {
+        // initialize() sets up session and registers listeners via Supabase
+        const unsubscribe = initialize();
+        return () => {
+            if (unsubscribe) unsubscribe();
+        };
+    }, [initialize]);
 
-import "./index.scss";
+    if (!isInitialized) {
+        // Show nothing or a clean loader until auth completes
+        return (
+            <div className="h-screen w-screen flex items-center justify-center bg-surface">
+                <div className="animate-pulse w-8 h-8 rounded-full bg-accent opacity-50"></div>
+            </div>
+        );
+    }
 
-import SettingsScreen from "./pages/SettingsScreen.jsx";
-import Statistics from "./pages/Statistics.jsx";
-import Notes from "./pages/Notes.jsx";
-import FAQ from "./pages/FAQ.jsx";
-import ErrorScreen from "./pages/ErrorScreen.jsx";
-import HomeScreen from "./pages/HomeScreen.jsx";
-import LogInScreen from "./pages/LogInScreen.jsx";
-import SignUpScreen from "./pages/SignUpScreen.jsx";
-import ChangePasswordModal from "./components/ChangePasswordModal.jsx";
-import NewNoteScreen from "./pages/NewNoteScreen.jsx";
-import NoteUpdate from "./components/NoteUpdate.jsx";
+    return (
+        <React.StrictMode>
+            <QueryClientProvider client={queryClient}>
+                <ToastProvider>
+                    <BrowserRouter>
+                        <App />
+                    </BrowserRouter>
+                </ToastProvider>
+            </QueryClientProvider>
+        </React.StrictMode>
+    );
+}
 
-import { Provider } from "react-redux";
-
-import { configureStore } from "@reduxjs/toolkit";
-
-import darkMode from "./services/store/darkMode.js";
-import parameters from "./services/store/parameters.js";
-import authReducer from "./services/store/Auth.js";
-import noteReducer from "./services/store/note.js";
-import NotesReducer from "./services/store/NotesSectionActions.js";
-import statsReducer from "./services/store/stats.js";
-
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-const store = configureStore({
-  reducer: {
-    darkMode: darkMode,
-    parameters: parameters,
-    auth: authReducer,
-    note: noteReducer,
-    notesSectionActions: NotesReducer,
-    stats: statsReducer,
-  },
-});
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: { refetchInterval: null, refetchOnWindowFocus: false },
-  },
-});
-
-const RootLayout = () => {
-  const { token } = useSelector((state) => state.auth);
-  return token ? <Notes /> : <HomeScreen />;
-};
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-    errorElement: <ErrorScreen />,
-    children: [
-      { path: "", element: <RootLayout /> },
-      { path: "notes", element: <Notes /> },
-      { path: "settings", element: <SettingsScreen /> },
-      { path: "statistics", element: <Statistics /> },
-      { path: "faq", element: <FAQ /> },
-    ],
-  },
-  { path: "login", element: <LogInScreen /> },
-  { path: "signup", element: <SignUpScreen /> },
-  { path: "changePassword", element: <ChangePasswordModal /> },
-  { path: "addNewNote", element: <NewNoteScreen /> },
-  { path: "edit/:idNote", element: <NoteUpdate /> },
-]);
-
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <Provider store={store}>
-        <RouterProvider router={router} />
-      </Provider>
-    </QueryClientProvider>
-  </StrictMode>
-);
+ReactDOM.createRoot(document.getElementById('root')).render(<AppWrapper />);
