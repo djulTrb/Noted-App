@@ -15,7 +15,6 @@ dist-ssr
 .env.*
 .env
 
-
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -30,3 +29,12 @@ dist-ssr
 
 # Local Netlify folder
 .netlify
+
+# Build artifacts & type declarations
+tsconfig.tsbuildinfo
+tsconfig.node.tsbuildinfo
+vite.config.d.ts
+.tanstack/
+
+# Temp files
+tracked_files.txt
