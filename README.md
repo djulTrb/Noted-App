@@ -1,10 +1,18 @@
+<div align="center">
+  
 # Noted
 
-**The quiet, encrypted workspace for your life's essential data.**
+[![Live Demo](https://img.shields.io/badge/Live-Demo-6D28D9?style=for-the-badge)](https://app-noted.netlify.app)
+[![React](https://img.shields.io/badge/React-18-blue?style=for-the-badge&logo=react)](https://reactjs.org/)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![GSAP](https://img.shields.io/badge/Animations-GSAP-green?style=for-the-badge)](https://greensock.com/gsap/)
 
+</div>
+
+**The quiet, encrypted workspace for your life's essential data.**
 Noted is a comprehensive, privacy-first web application designed to help you capture your thoughts, manage your tasks, and track your finances—all within a unified, distraction-free environment. Built with modern web technologies, it emphasizes a sleek "Glass Garden" aesthetic and implements zero-knowledge architecture to ensure that your data remains securely yours.
 
-![Noted Hero Preview](https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=1200)
+---
 
 ## Core Capabilities
 
