@@ -2,10 +2,10 @@ import React from 'react';
 import { Modal } from '../ui/Modal.jsx';
 import { Button } from '../ui/Button.jsx';
 import { Tag } from '../ui/Tag.jsx';
-import { Pencil, Trash2, Clock } from 'lucide-react';
+import { Pencil, Trash2, Clock, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-export function NoteModal({ note, isOpen, onClose, onDelete }) {
+export function NoteModal({ note, isOpen, onClose, onDelete, isDeleting = false }) {
     const navigate = useNavigate();
 
     if (!note) return null;
@@ -23,6 +23,7 @@ export function NoteModal({ note, isOpen, onClose, onDelete }) {
     };
 
     const handleDelete = () => {
+        if (isDeleting) return;
         if (window.confirm('Are you sure you want to delete this note? This action cannot be undone.')) {
             onDelete(note.id_note);
             onClose();
@@ -48,9 +49,15 @@ export function NoteModal({ note, isOpen, onClose, onDelete }) {
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <Button size="sm" variant="ghost" onClick={handleDelete} className="text-danger hover:text-white hover:bg-danger">
-                            <Trash2 size={16} />
-                            <span className="hidden sm:inline">Delete</span>
+                        <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={handleDelete}
+                            className="text-danger hover:text-white hover:bg-danger"
+                            disabled={isDeleting}
+                        >
+                            {isDeleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                            <span className="hidden sm:inline">{isDeleting ? 'Deleting...' : 'Delete'}</span>
                         </Button>
                         <Button size="sm" variant="secondary" onClick={handleEdit}>
                             <Pencil size={16} />

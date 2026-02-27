@@ -3,23 +3,27 @@ import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../stores/authStore';
 
 export function useFetchTodos() {
+    const user = useAuthStore((state) => state.user);
+
     return useQuery({
-        queryKey: ['todos'],
+        queryKey: ['todos', user?.id],
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('todos')
                 .select('*')
+                .eq('id_user', user.id)
                 .order('created_at', { ascending: false });
 
             if (error) throw error;
             return data;
         },
+        enabled: !!user?.id,
     });
 }
 
 export function useCreateTodo() {
     const queryClient = useQueryClient();
-    const user = useAuthStore(state => state.session?.user);
+    const user = useAuthStore((state) => state.user);
 
     return useMutation({
         mutationFn: async (text) => {
@@ -34,13 +38,14 @@ export function useCreateTodo() {
             return data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['todos'] });
+            queryClient.invalidateQueries({ queryKey: ['todos', user?.id] });
         },
     });
 }
 
 export function useUpdateTodo() {
     const queryClient = useQueryClient();
+    const user = useAuthStore((state) => state.user);
 
     return useMutation({
         mutationFn: async ({ id, completed }) => {
@@ -55,13 +60,14 @@ export function useUpdateTodo() {
             return data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['todos'] });
+            queryClient.invalidateQueries({ queryKey: ['todos', user?.id] });
         },
     });
 }
 
 export function useDeleteTodo() {
     const queryClient = useQueryClient();
+    const user = useAuthStore((state) => state.user);
 
     return useMutation({
         mutationFn: async (id) => {
@@ -73,7 +79,7 @@ export function useDeleteTodo() {
             if (error) throw error;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['todos'] });
+            queryClient.invalidateQueries({ queryKey: ['todos', user?.id] });
         },
     });
 }

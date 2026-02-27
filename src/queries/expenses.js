@@ -3,23 +3,27 @@ import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../stores/authStore';
 
 export function useFetchExpenses() {
+    const user = useAuthStore((state) => state.user);
+
     return useQuery({
-        queryKey: ['expenses'],
+        queryKey: ['expenses', user?.id],
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('expenses')
                 .select('*')
+                .eq('id_user', user.id)
                 .order('created_at', { ascending: false });
 
             if (error) throw error;
             return data;
         },
+        enabled: !!user?.id,
     });
 }
 
 export function useCreateExpense() {
     const queryClient = useQueryClient();
-    const user = useAuthStore(state => state.session?.user);
+    const user = useAuthStore((state) => state.user);
 
     return useMutation({
         mutationFn: async ({ title, amount, type }) => {
@@ -34,13 +38,14 @@ export function useCreateExpense() {
             return data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['expenses'] });
+            queryClient.invalidateQueries({ queryKey: ['expenses', user?.id] });
         },
     });
 }
 
 export function useDeleteExpense() {
     const queryClient = useQueryClient();
+    const user = useAuthStore((state) => state.user);
 
     return useMutation({
         mutationFn: async (id) => {
@@ -52,7 +57,7 @@ export function useDeleteExpense() {
             if (error) throw error;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['expenses'] });
+            queryClient.invalidateQueries({ queryKey: ['expenses', user?.id] });
         },
     });
 }

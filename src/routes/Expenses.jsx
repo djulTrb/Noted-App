@@ -12,8 +12,8 @@ import { Menu } from 'lucide-react';
 
 export default function Expenses() {
     const { data: expenses = [], isLoading } = useFetchExpenses();
-    const createExpense = useCreateExpense();
-    const deleteExpenseMutation = useDeleteExpense();
+    const { mutate: createExpenseMutate, isPending: isCreating } = useCreateExpense();
+    const { mutate: deleteExpenseMutate, isPending: isDeleting } = useDeleteExpense();
     const setDrawerOpen = useUiStore((state) => state.setMobileDrawerOpen);
 
     const [title, setTitle] = useState('');
@@ -22,9 +22,9 @@ export default function Expenses() {
 
     const handleAdd = (e) => {
         e.preventDefault();
-        if (!title.trim() || !amount || createExpense.isPending) return;
+        if (!title.trim() || !amount || isCreating) return;
 
-        createExpense.mutate(
+        createExpenseMutate(
             { title: title.trim(), amount: parseFloat(amount), type },
             {
                 onSuccess: () => {
@@ -36,7 +36,8 @@ export default function Expenses() {
     };
 
     const deleteExpense = (id) => {
-        deleteExpenseMutation.mutate(id);
+        if (isDeleting) return;
+        deleteExpenseMutate(id);
     };
 
     const formatDate = (dateString) => {
@@ -113,9 +114,18 @@ export default function Expenses() {
                                     <option value="income">Income</option>
                                 </select>
                             </div>
-                            <Button type="submit" variant="primary" className="shrink-0 group">
-                                <Plus size={20} className="group-hover:rotate-90 transition-transform" />
-                                Add
+                            <Button type="submit" variant="primary" className="shrink-0 group" disabled={isCreating}>
+                                {isCreating ? (
+                                    <>
+                                        <Loader2 size={18} className="animate-spin mr-2" />
+                                        Saving...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Plus size={20} className="group-hover:rotate-90 transition-transform" />
+                                        Add
+                                    </>
+                                )}
                             </Button>
                         </form>
 
@@ -161,9 +171,9 @@ export default function Expenses() {
                                                 onClick={() => deleteExpense(expense.id)}
                                                 className="w-8 h-8 rounded-full flex items-center justify-center text-muted hover:text-danger hover:bg-danger/10 opacity-0 group-hover:opacity-100 transition-all focus:opacity-100"
                                                 aria-label="Delete expense"
-                                                disabled={deleteExpenseMutation.isPending}
+                                                disabled={isDeleting}
                                             >
-                                                <Trash2 size={16} />
+                                                {isDeleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
                                             </button>
                                         </div>
                                     </div>

@@ -12,27 +12,29 @@ import { Menu } from 'lucide-react';
 
 export default function TodoList() {
     const { data: todos = [], isLoading } = useFetchTodos();
-    const createTodo = useCreateTodo();
-    const updateTodo = useUpdateTodo();
-    const deleteTodoMutation = useDeleteTodo();
+    const { mutate: createTodoMutate, isPending: isCreating } = useCreateTodo();
+    const { mutate: updateTodoMutate, isPending: isUpdating } = useUpdateTodo();
+    const { mutate: deleteTodoMutate, isPending: isDeleting } = useDeleteTodo();
     const setDrawerOpen = useUiStore((state) => state.setMobileDrawerOpen);
 
     const [newTodo, setNewTodo] = useState('');
 
     const handleAdd = (e) => {
         e.preventDefault();
-        if (!newTodo.trim() || createTodo.isPending) return;
-        createTodo.mutate(newTodo.trim(), {
+        if (!newTodo.trim() || isCreating) return;
+        createTodoMutate(newTodo.trim(), {
             onSuccess: () => setNewTodo('')
         });
     };
 
     const toggleTodo = (id, currentStatus) => {
-        updateTodo.mutate({ id, completed: !currentStatus });
+        if (isUpdating) return;
+        updateTodoMutate({ id, completed: !currentStatus });
     };
 
     const deleteTodo = (id) => {
-        deleteTodoMutation.mutate(id);
+        if (isDeleting) return;
+        deleteTodoMutate(id);
     };
 
     const formatDate = (dateString) => {
@@ -66,9 +68,18 @@ export default function TodoList() {
                                 placeholder="What needs to be done?"
                                 className="flex-1 bg-elevated border-none rounded-xl px-4 py-3 text-primary placeholder:text-muted focus:ring-2 focus:ring-accent outline-none font-medium transition-shadow"
                             />
-                            <Button type="submit" variant="primary" className="shrink-0 group">
-                                <Plus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
-                                Add Task
+                            <Button type="submit" variant="primary" className="shrink-0 group" disabled={isCreating}>
+                                {isCreating ? (
+                                    <>
+                                        <Loader2 size={18} className="animate-spin mr-2" />
+                                        Saving...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Plus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
+                                        Add Task
+                                    </>
+                                )}
                             </Button>
                         </form>
 
@@ -90,14 +101,15 @@ export default function TodoList() {
                                             todo.completed ? "bg-elevated/50 border-transparent" : "bg-surface border-custom hover:border-accent/30 hover:shadow-sm"
                                         )}
                                     >
-                                        <button
-                                            onClick={() => toggleTodo(todo.id, todo.completed)}
-                                            className={cn(
-                                                "w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors",
-                                                todo.completed ? "bg-accent border-accent text-white" : "border-custom text-transparent hover:border-accent/50"
-                                            )}
-                                            disabled={updateTodo.isPending}
-                                        >
+                                            <button
+                                                onClick={() => toggleTodo(todo.id, todo.completed)}
+                                                className={cn(
+                                                    "w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors",
+                                                    todo.completed ? "bg-accent border-accent text-white" : "border-custom text-transparent hover:border-accent/50",
+                                                    (isUpdating || isDeleting) && "opacity-60 cursor-wait"
+                                                )}
+                                                disabled={isUpdating || isDeleting}
+                                            >
                                             <Check size={14} className={todo.completed ? "opacity-100" : "opacity-0"} />
                                         </button>
 
@@ -118,9 +130,9 @@ export default function TodoList() {
                                             onClick={() => deleteTodo(todo.id)}
                                             className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-muted hover:text-danger hover:bg-danger/10 opacity-0 group-hover:opacity-100 transition-all focus:opacity-100"
                                             aria-label="Delete task"
-                                            disabled={deleteTodoMutation.isPending}
+                                            disabled={isDeleting}
                                         >
-                                            <Trash2 size={16} />
+                                            {isDeleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
                                         </button>
                                     </div>
                                 ))

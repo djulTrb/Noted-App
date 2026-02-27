@@ -38,3 +38,14 @@ vite.config.d.ts
 
 # Temp files
 tracked_files.txt
+
+# GitHub template doc (tracked in repo, but ignored for new clones/local copies)
+github.md
+
+# Coverage / caches
+coverage/
+.vite/
+.eslintcache
+
+# Cursor / editor metadata
+.cursor/

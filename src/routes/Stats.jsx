@@ -10,8 +10,6 @@ import gsap from 'gsap';
 import {
     AreaChart,
     Area,
-    BarChart,
-    Bar,
     XAxis,
     YAxis,
     Tooltip,
@@ -44,7 +42,6 @@ export default function Stats() {
     }, [isLoading]);
 
     const activeDaysCount = stats?.activity_dates?.length || 0;
-    const totalNotesCount = notes?.length || 0;
 
     // Derived: Current Streak
     const streak = useMemo(() => {
@@ -89,16 +86,6 @@ export default function Stats() {
         }
         return data;
     };
-
-    const activityData = useMemo(() => {
-        if (!stats?.activity_dates) return [];
-        const dateCounts = {};
-        stats.activity_dates.forEach(d => {
-            const dateStr = new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            dateCounts[dateStr] = (dateCounts[dateStr] || 0) + 1;
-        });
-        return generateTimeline(10).map(t => ({ name: t.name, Activity: dateCounts[t.name] || 0 }));
-    }, [stats?.activity_dates]);
 
     const notesData = useMemo(() => {
         if (!notes) return [];
@@ -213,28 +200,6 @@ export default function Stats() {
                                 {/* Bento-box Charts Grid */}
                                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
 
-                                    {/* Activity Chart — full width, BarChart style */}
-                                    <div className="stat-card bg-surface border border-custom rounded-[20px] p-6 sm:p-8 shadow-sm lg:col-span-3">
-                                        <h3 className="text-lg font-bold font-sans text-primary mb-6">General Activity</h3>
-                                        <div className="w-full h-64">
-                                            <ResponsiveContainer width="100%" height="100%">
-                                                <BarChart data={activityData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                                                    <defs>
-                                                        <linearGradient id="barActivity" x1="0" y1="0" x2="0" y2="1">
-                                                            <stop offset="0%" stopColor="#7C6AFA" stopOpacity={0.9} />
-                                                            <stop offset="100%" stopColor="#7C6AFA" stopOpacity={0.3} />
-                                                        </linearGradient>
-                                                    </defs>
-                                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-custom)" />
-                                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)', fontSize: 12 }} dy={10} />
-                                                    <YAxis axisLine={false} tickLine={false} tick={false} />
-                                                    <Tooltip content={<CustomTooltip />} cursor={false} />
-                                                    <Bar dataKey="Activity" fill="url(#barActivity)" radius={[6, 6, 0, 0]} maxBarSize={48} activeBar={{ fill: '#7C6AFA', opacity: 1 }} />
-                                                </BarChart>
-                                            </ResponsiveContainer>
-                                        </div>
-                                    </div>
-
                                     {/* Notes Velocity Chart */}
                                     <div className="stat-card bg-surface border border-custom rounded-[20px] p-6 sm:p-8 shadow-sm">
                                         <h3 className="text-lg font-bold font-sans text-primary mb-6">Notes Created</h3>
@@ -247,7 +212,7 @@ export default function Stats() {
                                                             <stop offset="95%" stopColor="#38BDF8" stopOpacity={0} />
                                                         </linearGradient>
                                                     </defs>
-                                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-custom)" />
+                                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                                                     <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)', fontSize: 12 }} dy={10} />
                                                     <YAxis axisLine={false} tickLine={false} tick={false} />
                                                     <Tooltip content={<CustomTooltip />} />
@@ -273,7 +238,7 @@ export default function Stats() {
                                                             <stop offset="95%" stopColor="#FB7185" stopOpacity={0} />
                                                         </linearGradient>
                                                     </defs>
-                                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-custom)" />
+                                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                                                     <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)', fontSize: 12 }} dy={10} />
                                                     <YAxis axisLine={false} tickLine={false} tick={false} />
                                                     <Tooltip content={<CustomTooltip />} />
@@ -300,7 +265,7 @@ export default function Stats() {
                                                             <stop offset="95%" stopColor="#FB923C" stopOpacity={0} />
                                                         </linearGradient>
                                                     </defs>
-                                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-custom)" />
+                                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                                                     <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)', fontSize: 12 }} dy={10} />
                                                     <YAxis axisLine={false} tickLine={false} tick={false} />
                                                     <Tooltip content={<CustomTooltip />} />

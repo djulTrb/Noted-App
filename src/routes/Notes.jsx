@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Plus, FilterX, FileText } from 'lucide-react';
+import { Search, Plus, FilterX, FileText, Loader2 } from 'lucide-react';
 import { Sidebar } from '../components/layout/Sidebar.jsx';
 import { MobileDrawer } from '../components/layout/MobileDrawer.jsx';
 import { AppHeader } from '../components/layout/AppHeader.jsx';
@@ -16,7 +16,7 @@ import gsap from 'gsap';
 export default function Notes() {
     const navigate = useNavigate();
     const { data: notes, isLoading, error } = useNotes();
-    const { mutate: deleteNote } = useDeleteNote();
+    const { mutate: deleteNoteMutate, isPending: isDeleting } = useDeleteNote();
 
     const searchQuery = useNotesUiStore((state) => state.searchQuery);
     const setSearchQuery = useNotesUiStore((state) => state.setSearchQuery);
@@ -208,7 +208,11 @@ export default function Notes() {
                 note={selectedNote}
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onDelete={(id) => deleteNote(id)}
+                onDelete={(id) => {
+                    if (isDeleting) return;
+                    deleteNoteMutate(id);
+                }}
+                isDeleting={isDeleting}
             />
         </div>
     );

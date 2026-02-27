@@ -40,6 +40,25 @@ export function useStats() {
     });
 }
 
+export function useActivityLog() {
+    const user = useAuthStore((state) => state.user);
+
+    return useQuery({
+        queryKey: ['activity_log', user?.id],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('activity_log')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            return data || [];
+        },
+        enabled: !!user?.id,
+    });
+}
+
 export function useUpdateProfile() {
     const queryClient = useQueryClient();
     const user = useAuthStore((state) => state.user);
