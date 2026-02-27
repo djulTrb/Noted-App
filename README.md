@@ -48,5 +48,3 @@ Summon the built-in AI assistant to brainstorm, rewrite, or generate imagery rig
 
 Noted relies on Supabase's Row Level Security (RLS) to ensure that users can only access their authenticated data. Furthermore, Noted utilizes native Web Crypto APIs to execute AES-GCM encryption on the client side. Your notes and encrypted content are decrypted solely within your browser session, meaning the database only ever stores ciphertexts.
 
-
-*Designed and developed by [djulTrb](https://github.com/djulTrb).*
