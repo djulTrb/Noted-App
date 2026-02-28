@@ -168,17 +168,21 @@ export default function NoteEditor() {
                     "lg:hidden fixed inset-y-0 left-0 w-[85vw] sm:w-[320px] bg-surface z-50 transform transition-transform duration-300 ease-in-out shadow-2xl flex flex-col",
                     isAiOpenMobile ? "translate-x-0" : "-translate-x-full"
                 )}>
-                    <div className="flex items-center justify-between p-4 border-b border-custom">
-                        <span className="font-bold flex items-center gap-2 text-primary"><Bot size={18} className="text-accent" /> AI Assistant</span>
-                        <button onClick={() => setIsAiOpenMobile(false)} className="p-2 bg-elevated rounded-full text-secondary hover:text-primary">
-                            <X size={16} />
-                        </button>
-                    </div>
-                    <AiAssistant
-                        onInsertText={handleInsertText}
-                        onInsertImage={handleInsertImage}
-                        className="flex-1 h-auto pb-10"
-                    />
+                    {isAiOpenMobile && (
+                        <>
+                            <div className="flex items-center justify-between p-4 border-b border-custom">
+                                <span className="font-bold flex items-center gap-2 text-primary"><Bot size={18} className="text-accent" /> AI Assistant</span>
+                                <button onClick={() => setIsAiOpenMobile(false)} className="p-2 bg-elevated rounded-full text-secondary hover:text-primary">
+                                    <X size={16} />
+                                </button>
+                            </div>
+                            <AiAssistant
+                                onInsertText={handleInsertText}
+                                onInsertImage={handleInsertImage}
+                                className="flex-1 h-auto pb-10"
+                            />
+                        </>
+                    )}
                 </div>
 
                 {/* Mobile Backdrop */}

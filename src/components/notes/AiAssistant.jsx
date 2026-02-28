@@ -3,6 +3,9 @@ import axios from 'axios';
 import { Send, Image as ImageIcon, MessageSquare, Loader2, Plus } from 'lucide-react';
 import { Button } from '../ui/Button.jsx';
 import { cn } from '../../lib/utils.js';
+import { supabase } from '../../lib/supabase.js';
+import { useAuthStore } from '../../stores/authStore.js';
+import { v4 as uuidv4 } from 'uuid';
 
 export function AiAssistant({ onInsertText, onInsertImage, className }) {
     const [activeTab, setActiveTab] = useState('chat'); // 'chat' | 'image'
@@ -16,6 +19,7 @@ export function AiAssistant({ onInsertText, onInsertImage, className }) {
 
     // Image state
     const [generatedImage, setGeneratedImage] = useState(null);
+    const user = useAuthStore(state => state.user);
 
     const API_KEY = import.meta.env.VITE_POLLINATIONS_API_KEY;
 
@@ -98,6 +102,7 @@ export function AiAssistant({ onInsertText, onInsertImage, className }) {
         try {
             const encodedPrompt = encodeURIComponent(prompt.trim());
 
+            // 1. Fetch from Pollinations using the correct Model and API
             const response = await axios.get(`https://gen.pollinations.ai/image/${encodedPrompt}`, {
                 params: {
                     model: 'gptimage'
@@ -107,14 +112,27 @@ export function AiAssistant({ onInsertText, onInsertImage, className }) {
                 },
                 responseType: 'blob'
             });
-
             const blob = response.data;
-            const base64data = await new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result);
-                reader.readAsDataURL(blob);
-            });
-            setGeneratedImage(base64data);
+
+            // 2. Upload to Supabase Storage
+            const filename = `${uuidv4()}.png`;
+            const filePath = `${user.id}/${filename}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from('note-images')
+                .upload(filePath, blob, {
+                    contentType: 'image/png',
+                    upsert: true
+                });
+
+            if (uploadError) throw uploadError;
+
+            // 3. Get Public URL
+            const { data: { publicUrl } } = supabase.storage
+                .from('note-images')
+                .getPublicUrl(filePath);
+
+            setGeneratedImage(publicUrl);
 
         } catch (error) {
             console.error(error);
