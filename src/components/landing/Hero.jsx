@@ -48,9 +48,7 @@ export function Hero() {
                 {/* Typography First Heading */}
                 <h1 className="text-5xl md:text-7xl lg:text-[6rem] font-sans font-extrabold tracking-tighter text-primary leading-[1.05] hero-stagger">
                     Clarity through<br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent to-sky-400">
-                        encryption.
-                    </span>
+                    encryption.
                 </h1>
 
                 {/* Refined Subtitle */}
